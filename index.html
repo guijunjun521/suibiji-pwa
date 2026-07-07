@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="随手记" />
+  <title>随手记 · 工作计划</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 科技感背景层 -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+  </div>
+
+  <div class="app">
+    <!-- 顶部 -->
+    <header class="topbar">
+      <div class="title-row">
+        <h1><span class="logo-dot"></span>随手记<span class="accent">·</span></h1>
+        <button class="icon-btn" id="menuBtn" aria-label="菜单">⋯</button>
+      </div>
+      <div class="date-row">
+        <span id="todayLabel">今天</span>
+        <span class="stat" id="statLabel">0 条 · 完成 0</span>
+      </div>
+    </header>
+
+    <!-- 筛选标签 -->
+    <nav class="filters" id="filters">
+      <button class="chip active" data-filter="all">全部</button>
+      <button class="chip" data-filter="today">今日</button>
+      <button class="chip" data-filter="todo">未完成</button>
+      <button class="chip" data-filter="done">已完成</button>
+    </nav>
+
+    <!-- 搜索 -->
+    <div class="search-wrap">
+      <input type="search" id="searchInput" placeholder="🔍 搜索记录…" autocomplete="off" />
+    </div>
+
+    <!-- 列表 -->
+    <main class="list" id="list"></main>
+    <div class="empty" id="emptyState" hidden>
+      <div class="empty-emoji">📭</div>
+      <p>还没有记录</p>
+      <p class="sub">在下面输入框随手记一条吧</p>
+    </div>
+
+    <!-- 弹出菜单 -->
+    <div class="sheet-mask" id="sheetMask" hidden>
+      <div class="sheet">
+        <button id="exportBtn">⬇️ 导出备份 (JSON)</button>
+        <button id="importBtn">⬆️ 导入备份</button>
+        <button id="clearDoneBtn">🧹 清除已完成</button>
+        <button id="clearAllBtn" class="danger">🗑 清空全部</button>
+        <button id="sheetCancel" class="cancel">取消</button>
+        <input type="file" id="importFile" accept="application/json" hidden />
+      </div>
+    </div>
+
+    <!-- 底部输入 -->
+    <footer class="composer">
+      <input type="text" id="input" placeholder="突然想到的，随手记一下…" autocomplete="off" />
+      <button class="send-btn" id="addBtn">＋</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "随手记 · 工作计划",
+  "short_name": "随手记",
+  "description": "手机离线随手记录，自动形成每日工作计划，支持勾选与删除。",
+  "lang": "zh-CN",
+  "start_url": "index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060912",
+  "theme_color": "#0a0f1e",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

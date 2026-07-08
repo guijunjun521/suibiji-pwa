@@ -198,6 +198,47 @@
 
   // ---------- 事件绑定 ----------
   function bind() {
+    const input = $('#input');
+    const composerEl = $('#composer');
+
+    // —— 键盘弹出时整体上移，确保 + 号不被遮挡 ——
+    function adjustKeyboard() {
+      if (!window.visualViewport) return;
+      const vk = window.visualViewport;
+      const kb = window.innerHeight - vk.height - vk.offsetTop;
+      composerEl.style.bottom = kb > 0 ? kb + 'px' : '0px';
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', adjustKeyboard);
+      window.visualViewport.addEventListener('scroll', adjustKeyboard);
+    }
+    input.addEventListener('focus', () => setTimeout(adjustKeyboard, 300));
+    input.addEventListener('blur', () => { composerEl.style.bottom = '0px'; });
+
+    // —— 语音输入 ——
+    const micBtn = $('#micBtn');
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognizing = false;
+    if (SR) {
+      const rec = new SR();
+      rec.lang = 'zh-CN';
+      rec.interimResults = true;
+      rec.continuous = false;
+      rec.onresult = (e) => {
+        let txt = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) txt += e.results[i][0].transcript;
+        input.value = txt;
+      };
+      rec.onend = () => { recognizing = false; micBtn.classList.remove('recording'); };
+      rec.onerror = (e) => { recognizing = false; micBtn.classList.remove('recording'); if (e.error === 'not-allowed') toast('麦克风权限被拒绝'); };
+      micBtn.addEventListener('click', () => {
+        if (recognizing) { rec.stop(); return; }
+        try { rec.start(); recognizing = true; micBtn.classList.add('recording'); } catch (_) {}
+      });
+    } else {
+      micBtn.style.display = 'none'; // 浏览器不支持则隐藏
+    }
+
     $('#addBtn').addEventListener('click', () => {
       const inp = $('#input'); add(inp.value); inp.value = ''; inp.focus();
     });

@@ -207,6 +207,22 @@ body {
 .send-btn:active { transform: scale(.9); }
 .send-btn:hover { box-shadow: 0 6px 28px rgba(168,85,247,.55), 0 0 0 1px rgba(255,255,255,.18) inset; }
 
+/* 语音按钮 */
+.mic-btn {
+  flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--glass-strong);
+  color: var(--muted); font-size: 18px; cursor: pointer;
+  display: grid; place-items: center; transition: .18s;
+}
+.mic-btn:active { transform: scale(.9); }
+.mic-btn.recording {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  border-color: transparent; color: #fff;
+  box-shadow: 0 0 0 4px rgba(239,68,68,.22), 0 0 18px rgba(239,68,68,.5);
+  animation: micPulse 1.2s ease-in-out infinite;
+}
+@keyframes micPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
 /* ---------- 弹出菜单 ---------- */
 .sheet-mask {
   position: fixed; inset: 0; z-index: 50;

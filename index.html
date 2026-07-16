@@ -35,9 +35,9 @@
 
     <!-- 筛选标签 -->
     <nav class="filters" id="filters">
-      <button class="chip active" data-filter="all">全部</button>
+      <button class="chip" data-filter="all">全部</button>
       <button class="chip" data-filter="today">今日</button>
-      <button class="chip" data-filter="todo">未完成</button>
+      <button class="chip active" data-filter="todo">未完成</button>
       <button class="chip" data-filter="done">已完成</button>
     </nav>
 
@@ -65,6 +65,16 @@
         <button id="logoutBtn" class="logout">🚪 退出登录</button>
         <button id="sheetCancel" class="cancel">取消</button>
         <input type="file" id="importFile" accept="application/json" hidden />
+      </div>
+    </div>
+
+    <!-- 编辑记录 -->
+    <div class="sheet-mask" id="editMask" hidden>
+      <div class="sheet edit-sheet">
+        <textarea id="editText" rows="4" placeholder="编辑内容…"></textarea>
+        <button id="editSaveBtn">💾 保存修改</button>
+        <button id="editDeleteBtn" class="danger">🗑 删除这条</button>
+        <button id="editCancel" class="cancel">取消</button>
       </div>
     </div>
 

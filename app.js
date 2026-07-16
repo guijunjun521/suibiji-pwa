@@ -372,7 +372,41 @@
   // Service Worker 注册（离线缓存应用本身）
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {/* 本地直接打开时忽略 */});
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        // 发现新版本：安装完成后提示用户更新
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateToast();
+          });
+        });
+      }).catch(() => {/* 本地直接打开时忽略 */});
+
+      // 新 SW 接管后自动刷新一次，加载最新页面
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        location.reload();
+      });
     });
+  }
+
+  // 顶部“有新版本”提示，点击即激活新 SW
+  function showUpdateToast() {
+    let t = document.getElementById('updateToast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'updateToast';
+      t.className = 'toast update-toast';
+      t.addEventListener('click', () => {
+        const sw = navigator.serviceWorker;
+        if (sw.waiting) sw.waiting.postMessage('skipWaiting');
+        else location.reload();
+      });
+      document.body.appendChild(t);
+    }
+    t.textContent = '🆕 有新版本，点此更新';
+    t.classList.add('show');
   }
 })();

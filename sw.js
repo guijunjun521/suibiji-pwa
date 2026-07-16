@@ -1,5 +1,7 @@
-/* Service Worker：离线缓存应用外壳，使手机可离线使用 */
-const CACHE = 'suibiji-v1';
+/* Service Worker：离线缓存应用外壳，使手机可离线使用
+   策略：在线优先（network-first）——联网时始终拉取最新文件，
+   保证已登录用户也能及时用上新版；离线时回退到缓存，保证可用。 */
+const CACHE = 'suibiji-v2';
 const SHELL = [
   'index.html',
   'styles.css',
@@ -10,7 +12,8 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  // 不自动 skipWaiting：新版本先“等待”，由页面提示用户后再激活
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
 });
 
 self.addEventListener('activate', (e) => {
@@ -21,19 +24,25 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+// 接收页面发来的“立即激活”指令
+self.addEventListener('message', (e) => {
+  if (e.data === 'skipWaiting') self.skipWaiting();
+});
+
 self.addEventListener('fetch', (e) => {
-  // 只缓存本地静态资源；不拦截其他网络请求
+  // 只处理同源 GET 静态资源
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
 
+  // 在线优先：先请求网络拿到最新文件并刷新缓存；失败（离线）再回退缓存
   e.respondWith(
-    caches.match(e.request).then(cached =>
-      cached || fetch(e.request).then(resp => {
+    fetch(e.request)
+      .then(resp => {
         const copy = resp.clone();
         caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
         return resp;
-      }).catch(() => cached)
-    )
+      })
+      .catch(() => caches.match(e.request))
   );
 });

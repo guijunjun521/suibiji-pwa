@@ -313,3 +313,17 @@ body {
   padding: 10px 14px 12px; border-bottom: 1px solid var(--line-soft); margin-bottom: 6px;
 }
 .sheet button.logout { color: var(--c3); }
+
+/* 记录可点击进入编辑 */
+.item-body { cursor: pointer; }
+.item-body:active { opacity: .6; }
+
+/* 编辑记录弹层 */
+.edit-sheet { padding-top: 14px; }
+.edit-sheet textarea {
+  width: 100%; min-height: 120px; resize: none; margin: 6px 0 10px; padding: 14px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 13px;
+  color: var(--text); font-size: 15px; line-height: 1.55; outline: none;
+  font-family: inherit; -webkit-font-smoothing: antialiased;
+}
+.edit-sheet textarea:focus { border-color: var(--c1); box-shadow: 0 0 0 3px rgba(34,211,238,.16); }

@@ -255,6 +255,13 @@ body {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* 更新提示（可点击） */
+.toast.update-toast {
+  pointer-events: auto; cursor: pointer; bottom: 130px;
+  border-color: var(--c1); box-shadow: 0 0 22px rgba(34,211,238,.35);
+}
+.toast.update-toast:active { transform: translateX(-50%) scale(.96); }
+
 /* [hidden] 兼容 */
 [hidden] { display: none !important; }
 

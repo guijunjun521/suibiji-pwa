@@ -81,8 +81,9 @@
 
   // ---------- 状态 ----------
   let items = [];  // 登录后由 showMain 加载当前账号数据
-  let currentFilter = 'all';
+  let currentFilter = 'todo';
   let keyword = '';
+  let editingId = null;
 
   // ---------- 渲染 ----------
   const listEl = $('#list');
@@ -139,6 +140,7 @@
     time.className = 'item-time';
     time.textContent = fmtTime(it.createdAt) + (it.done && it.doneAt ? ' · 已完成' : '');
     body.appendChild(txt); body.appendChild(time);
+    body.addEventListener('click', () => openEdit(it.id));
     const del = document.createElement('button');
     del.className = 'del-btn';
     del.textContent = '✕';
@@ -183,6 +185,32 @@
     if (!items.length) return toast('列表已是空的');
     if (!confirm('⚠️ 清空全部记录？此操作不可恢复，建议先导出备份。')) return;
     items = []; STORE.save(items); render(); toast('已清空');
+  }
+
+  // ---------- 编辑记录 ----------
+  function openEdit(id) {
+    const it = items.find(i => i.id === id);
+    if (!it) return;
+    editingId = id;
+    $('#editText').value = it.text;
+    $('#editMask').hidden = false;
+    setTimeout(() => { $('#editText').focus(); $('#editText').setSelectionRange(it.text.length, it.text.length); }, 50);
+  }
+  function closeEdit() { $('#editMask').hidden = true; editingId = null; }
+  function saveEdit() {
+    const it = items.find(i => i.id === editingId);
+    if (!it) return closeEdit();
+    const v = $('#editText').value.trim();
+    if (!v) { toast('内容不能为空'); return; }
+    it.text = v;
+    STORE.save(items); render(); closeEdit(); toast('已保存');
+  }
+  function deleteEdit() {
+    const it = items.find(i => i.id === editingId);
+    const label = it ? it.text.slice(0, 12) : '这条';
+    if (!confirm(`确定删除「${label}…」吗？`)) return;
+    items = items.filter(i => i.id !== editingId);
+    STORE.save(items); render(); closeEdit(); toast('已删除');
   }
 
   // ---------- 导出/导入 ----------
@@ -246,6 +274,8 @@
       const vk = window.visualViewport;
       const kb = window.innerHeight - vk.height - vk.offsetTop;
       composerEl.style.bottom = kb > 0 ? kb + 'px' : '0px';
+      const em = $('#editMask');
+      if (em) em.style.paddingBottom = kb > 0 ? kb + 'px' : '0px';
     }
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', adjustKeyboard);
@@ -306,6 +336,14 @@
     $('#importFile').addEventListener('change', (e) => { if (e.target.files[0]) importData(e.target.files[0]); });
     $('#clearDoneBtn').addEventListener('click', () => { clearDone(); closeSheet(); });
     $('#clearAllBtn').addEventListener('click', () => { clearAll(); closeSheet(); });
+
+    // 编辑记录
+    $('#editSaveBtn').addEventListener('click', saveEdit);
+    $('#editDeleteBtn').addEventListener('click', deleteEdit);
+    $('#editCancel').addEventListener('click', closeEdit);
+    $('#editMask').addEventListener('click', (e) => { if (e.target.id === 'editMask') closeEdit(); });
+    $('#editText').addEventListener('focus', () => setTimeout(adjustKeyboard, 300));
+    $('#editText').addEventListener('blur', () => { $('#editMask').style.paddingBottom = '0px'; });
 
     // 登录 / 注册 / 退出
     $('#loginBtn').addEventListener('click', () => {
